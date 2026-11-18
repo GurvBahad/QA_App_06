@@ -2,15 +2,27 @@
 
 ## `main.py`
 
-`main.py` is a minimal Python entry point for the application.
+`main.py` opens a desktop sales explorer for `sales.csv`. Use the
+Product and Region dropdowns to filter the table; the displayed row count and
+total sales update as filters change. Click **Clear filters** to show all rows.
+Rows with missing or unusable values are excluded. Regional sales are
+calculated as `Quantity * Unit_Price`.
 
-- `main()` prints `Hello, world!` to standard output.
-- The `if __name__ == "__main__":` block calls `main()` only when
-  `main.py` is executed directly.
-- Importing `main.py` as a module does not run `main()` automatically.
+The app uses separate functions to load, clean, and summarize the data:
 
-Run the application from the repository root:
+- `load_sales_data()` reads the CSV records.
+- `clean_sales_data()` removes incomplete rows and standardizes display values.
+- `summarize_sales_by_region()` calculates regional revenue totals.
+
+The app also refreshes `regional_sales.csv` when it starts. Run the app from
+the repository root:
 
 ```bash
 python main.py
 ```
+
+Tkinter is included with most standard Python installations.
+If startup reports that Tcl/Tk is missing, choose a Python installation that
+includes Tcl/Tk as the project interpreter in your IDE. The app corrects stale
+`TCL_LIBRARY` and `TK_LIBRARY` paths when the active Python installation has
+the Tcl/Tk files available.
