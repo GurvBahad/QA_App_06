@@ -5,6 +5,8 @@
 `main.py` opens a desktop sales explorer for `sales.csv`. Use the
 Product and Region dropdowns to filter the table; the displayed row count and
 total sales update as filters change. Click **Clear filters** to show all rows.
+Click any table column heading to sort by that column; click it again to reverse
+the sort direction.
 Rows with missing or unusable values are excluded. Regional sales are
 calculated as `Quantity * Unit_Price`.
 

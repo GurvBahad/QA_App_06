@@ -157,6 +157,17 @@ def configure_tcl_tk() -> None:
                 break
 
 
+def sort_sales_rows(
+    rows: list[dict[str, str]], column: str, descending: bool = False
+) -> list[dict[str, str]]:
+    """Return sales rows sorted numerically or alphabetically by a column."""
+    if column in {"Quantity", "Unit_Price", "Revenue"}:
+        key = lambda row: Decimal(row[column])
+    else:
+        key = lambda row: row[column].casefold()
+    return sorted(rows, key=key, reverse=descending)
+
+
 class SalesExplorer:
     def __init__(self, root: tk.Tk, rows: list[dict[str, str]]) -> None:
         self.root = root
@@ -164,6 +175,8 @@ class SalesExplorer:
         self.product_filter = tk.StringVar(value="All products")
         self.region_filter = tk.StringVar(value="All regions")
         self.status = tk.StringVar()
+        self.sort_column: str | None = None
+        self.sort_descending = False
 
         self.root.title("Regional Product Sales")
         self.root.geometry("1120x650")
@@ -225,7 +238,11 @@ class SalesExplorer:
             table_frame, columns=TABLE_COLUMNS, show="headings", selectmode="browse"
         )
         for column in TABLE_COLUMNS:
-            self.table.heading(column, text=column.replace("_", " "))
+            self.table.heading(
+                column,
+                text=column.replace("_", " "),
+                command=lambda selected=column: self.sort_by_column(selected),
+            )
             self.table.column(column, width=110, minwidth=75, anchor="w")
         self.table.column("Date", width=105)
         self.table.column("Order_ID", width=100)
@@ -257,6 +274,20 @@ class SalesExplorer:
         self.region_filter.set("All regions")
         self.refresh_table()
 
+    def sort_by_column(self, column: str) -> None:
+        if self.sort_column == column:
+            self.sort_descending = not self.sort_descending
+        else:
+            self.sort_column = column
+            self.sort_descending = False
+
+        for heading in TABLE_COLUMNS:
+            label = heading.replace("_", " ")
+            if heading == self.sort_column:
+                label += " ▼" if self.sort_descending else " ▲"
+            self.table.heading(heading, text=label)
+        self.refresh_table()
+
     def refresh_table(self) -> None:
         for item in self.table.get_children():
             self.table.delete(item)
@@ -267,6 +298,11 @@ class SalesExplorer:
             if self.product_filter.get() in ("All products", row["Product"])
             and self.region_filter.get() in ("All regions", row["Region"])
         ]
+        if self.sort_column is not None:
+            filtered_rows = sort_sales_rows(
+                filtered_rows, self.sort_column, self.sort_descending
+            )
+
         for row in filtered_rows:
             self.table.insert(
                 "",
