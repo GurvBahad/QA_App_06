@@ -1,0 +1,11 @@
+{
+  "sales_file": "sales.csv",
+  "regional_file": "regional_sales.csv",
+  "invoice_file": "sales_invoice.pdf",
+  "app_title": "Regional Product Sales",
+  "window_width": 1120,
+  "window_height": 650,
+  "min_window_width": 800,
+  "min_window_height": 450,
+  "currency_code": "GBP"
+}
